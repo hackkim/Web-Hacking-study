@@ -1,147 +1,174 @@
-
-# 🛠️ Web Hacking Study: Understanding Web Servers and Parameter Transmission in PHP
-
-> In this post, we’ll explore how web servers work, how users interact with them using web browsers, and how to use PHP to receive parameters via GET and POST methods. This content is ideal for beginners who are starting to learn web development or web hacking.
-
----
+# 📚 Week 1 - Web Server and PHP Basics
 
 ## 🌐 What is a Web Server?
 
-A **Web Server** is a system that delivers content or services to end users over the web. It responds to HTTP requests from clients (usually browsers) and provides the corresponding files such as HTML, CSS, JS, or dynamically generated PHP pages.
+- A **Web Server** is a system that **delivers requested files** (HTML, PHP, images, etc.) to clients (browsers) over the internet.
+- Commonly used in **APM stack**: Apache (Web Server) + PHP (Server-side Language) + MySQL (Database).
 
-### Web Root Example:
-```
-/var/www/html/
-```
-
-Files placed inside this directory are accessible through a browser if the server is running.
+**Example Credentials:**
+- ID: `student`
+- Password: `student1234`
 
 ---
 
-## 🧭 URL Structure and HTTP Request Basics
+## 🖥️ How Does a Browser Request a File?
 
-A typical HTTP request URL looks like:
+You can request a file using a **web browser** by specifying a **URL**.
+
+### 📄 URL Structure
 
 ```
-[Protocol]://[Domain or IP address]:[Port]/[File path]
+[Protocol]://[Domain or IP address]:[Port]/[File Path]
 ```
 
-### Example:
+**Example:**
+
 ```
-http://192.168.50.177:80/index.html
+http://192.168.50.177:80/
 ```
 
-- **Protocol**: `http` or `https`
-- **Domain/IP**: IP address or website name
-- **Port**: Optional (80 for HTTP, 443 for HTTPS)
-- **File path**: Path to the file on the server (relative to web root)
+- **Web Root Path:** `/var/www/html/`
 
-> 🔸 Browsers automatically assume port 80 for HTTP and 443 for HTTPS if not specified.
+The browser sends a request, and the web server returns the corresponding file located under the web root directory.
 
 ---
 
-## 💡 Web Application Architecture
+## 🚪 Standard Ports (Social Convention)
 
-Modern web applications often follow this structure:
+| Protocol | Default Port |
+|:---|:---|
+| HTTP | 80 |
+| HTTPS | 443 |
 
-```
-Client (Browser)
-    ↓
-Web Server (Apache, Nginx)
-    ↓
-Web Application Server (WAS - PHP, JSP, ASP)
-    ↓
-Database (MySQL, MariaDB, etc.)
-```
-
-This layered design separates static file serving (web server) from dynamic processing (WAS).
+- When using standard ports, specifying the port is optional.
+- Non-standard ports must be specified in the URL.
 
 ---
 
-## ⚙️ PHP and HTTP Methods: GET vs POST
+## 🛠️ Web Application Server (WAS)
 
-In PHP, data from a user can be retrieved through either `$_GET` or `$_POST`, depending on the HTTP method used in the form submission.
+**Flow:**
 
----
-
-## 📮 GET Method
-
-### Description:
-- Sends form data through the **URL**
-- Parameters are appended as query strings
-- Visible to the user
-- Used for non-sensitive data and linkable resources
-
-### Example HTML Form:
-
-```html
-<form method="GET" action="login_proc.php">
-    <input type="text" name="id" placeholder="Enter your ID">
-    <input type="password" name="pass" placeholder="Enter your password">
-    <input type="submit" value="Login">
-</form>
+```
+Client (Browser) → Web Server → WAS (Web Application Server) → Database (DB)
 ```
 
-### Example PHP Handler (`login_proc.php`):
+- **WAS** handles dynamic content generation and business logic.
+- Web Server delivers static files or passes requests to the WAS for dynamic content.
+
+Example PHP start:
 
 ```php
 <?php
-    echo "ID: " . $_GET['id'] . "<br>";
-    echo "Password: " . $_GET['pass'];
-?>
-```
-
-### URL will look like:
-```
-login_proc.php?id=student&pass=student1234
-```
-
----
-
-## 🕶️ POST Method
-
-### Description:
-- Sends form data through the **request body**
-- Not visible in the URL
-- More secure than GET (but still needs HTTPS for full security)
-- Commonly used for login forms and data modification
-
-### Example HTML Form:
-
-```html
-<form method="POST" action="login_proc.php">
-    <input type="text" name="id" placeholder="Enter your ID">
-    <input type="password" name="pass" placeholder="Enter your password">
-    <input type="submit" value="Login">
-</form>
-```
-
-### Example PHP Handler:
-
-```php
-<?php
-    echo "ID: " . $_POST['id'] . "<br>";
-    echo "Password: " . $_POST['pass'];
+    // PHP script execution begins here
 ?>
 ```
 
 ---
 
-## 🔍 Key Differences Between GET and POST
+## 🔧 VSCode - SFTP Plugin
 
-| Feature           | GET                                  | POST                                 |
-|------------------|---------------------------------------|--------------------------------------|
-| Data Location     | URL (query string)                   | HTTP Request Body                    |
-| Visibility        | Visible in address bar               | Hidden from user view                |
-| Use Case          | Search queries, filters, navigation  | Logins, form submissions, updates    |
-| Max Data Length   | Limited (about 2048 characters)       | Much larger                          |
-| Security          | Less secure (use only for public data)| More secure (use with HTTPS)         |
+- Use **SFTP plugin in VSCode** to upload and synchronize files directly between your local machine and the server securely.
 
 ---
 
-## 🧪 Practice Exercise: Basic Login Page Using GET
+# 🖋️ PHP Basics
 
-### login.html
+- `$_GET["key"]` and `$_POST["key"]` are PHP superglobals to retrieve client data.
+- `echo` and `print` are used for output.
+
+```php
+<?php
+echo $_GET['username'];
+echo $_POST['password'];
+?>
+```
+
+---
+
+# ✉️ HTTP Request Methods: GET vs POST
+
+| Method | Characteristics |
+|:---|:---|
+| GET | Data is appended to the URL, visible, limited data size, used for simple requests. |
+| POST | Data is sent in the request body, hidden from URL, no size limitation, used for sensitive information like login. |
+
+### 🖥️ Front-End vs Back-End
+
+| Front-End | Back-End |
+|:---|:---|
+| Client-side code executed by browsers (HTML, CSS, JavaScript). | Server-side code executed on servers (PHP, ASP, JSP, Node.js). |
+
+---
+
+# ✅ Example: GET Method Form
+
+**HTML Form:**
+
+```html
+<form method="GET">
+    <input type="text" name="id">
+    <input type="submit" value="Submit">
+</form>
+```
+
+**PHP Script:**
+
+```php
+<?php
+echo $_GET['id'];
+?>
+```
+
+After submission, the URL will be:
+
+```
+http://yourdomain.com/?id=student
+```
+
+- Parameters are **exposed in the URL**.
+
+---
+
+# ✅ Example: POST Method Form
+
+**HTML Form:**
+
+```html
+<form method="POST">
+    <input type="text" name="id">
+    <input type="submit" value="Submit">
+</form>
+```
+
+**PHP Script:**
+
+```php
+<?php
+echo $_POST['id'];
+?>
+```
+
+- Parameters are **hidden** and sent inside the **request body**.
+
+---
+
+# 📋 Difference Between GET and POST
+
+| Aspect | GET | POST |
+|:---|:---|:---|
+| Visibility | Visible in URL | Hidden in Request Body |
+| Security | Less secure (sensitive data can be exposed) | More secure (data not shown in URL) |
+| Data Size | Limited | Unlimited (depends on server settings) |
+| Use Case | Simple data retrieval (e.g., search) | Secure data submission (e.g., login, payment) |
+
+**Best Practice:** Use **POST** for login forms and sensitive information transmission.
+
+---
+
+# 🔐 Login Form Example (GET Method)
+
+**login.html:**
 
 ```html
 <form method="GET" action="login_proc.php">
@@ -151,44 +178,44 @@ login_proc.php?id=student&pass=student1234
 </form>
 ```
 
-### login_proc.php
+**login_proc.php:**
 
 ```php
 <?php
-    echo "<h2>Login Information Received</h2>";
-    echo "ID: " . htmlspecialchars($_GET['id']) . "<br>";
-    echo "Password: " . htmlspecialchars($_GET['pass']);
+    echo $_GET['id'];
+    echo $_GET['pass'];
 ?>
 ```
 
----
-
-## 💬 Summary: What You Learned
-
-1. How to use a web browser to send requests to a web server
-2. How URLs are structured and how ports work (80, 443)
-3. The difference between GET and POST methods in PHP
-4. How to send and receive parameters using forms
-5. How to make your own login page and parameter receiver in PHP
-
----
-
-## 📝 Developer Notes
-
-- Use `htmlspecialchars()` to prevent XSS when printing user inputs.
-- Use POST for all login and sensitive data.
-- You can test these pages by placing them in `/var/www/html` if using Apache, or in a public folder if using XAMPP/MAMP.
-- Use the **SFTP extension in VSCode** to upload files to a remote web server.
-
----
-
-## 🧪 Example Login Credentials
+After submission, the URL will look like:
 
 ```
-ID: student
-Password: student1234
+http://yourdomain.com/login_proc.php?id=student&pass=student1234
 ```
+
+- `&` is used as a **parameter separator** between multiple query parameters.
 
 ---
 
-Happy hacking! 🎯
+# 📌 Key Takeaways
+
+1. **Web Server**: Delivers requested files (HTML, PHP, etc.).
+2. **WAS (Web Application Server)**: Handles dynamic content.
+3. **URL structure** and **default ports** for HTTP/HTTPS.
+4. **GET vs POST** differences and security implications.
+5. **Handling parameters** in PHP using `$_GET` and `$_POST`.
+
+---
+
+# 📈 Summary Table
+
+| Concept | Explanation |
+|:---|:---|
+| Web Server | Delivers static and dynamic files |
+| WAS | Processes business logic |
+| GET Method | Appends data to URL, visible |
+| POST Method | Sends data in body, hidden |
+| PHP $_GET | Retrieves GET parameters |
+| PHP $_POST | Retrieves POST parameters |
+
+Stay focused, practice hard, and secure your web applications! 🚀
