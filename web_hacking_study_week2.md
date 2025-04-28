@@ -1,194 +1,183 @@
+# 📃 Week 2 - PHP and Database Basics
 
-# 🛠️ Web Hacking Study: Understanding Web Servers and Parameter Transmission in PHP
-
-> In this post, we’ll explore how web servers work, how users interact with them using web browsers, and how to use PHP to receive parameters via GET and POST methods. This content is ideal for beginners who are starting to learn web development or web hacking.
-
----
-
-## 🌐 What is a Web Server?
-
-A **Web Server** is a system that delivers content or services to end users over the web. It responds to HTTP requests from clients (usually browsers) and provides the corresponding files such as HTML, CSS, JS, or dynamically generated PHP pages.
-
-### Web Root Example:
-```
-/var/www/html/
-```
-
-Files placed inside this directory are accessible through a browser if the server is running.
-
----
-
-## 🧭 URL Structure and HTTP Request Basics
-
-A typical HTTP request URL looks like:
-
-```
-[Protocol]://[Domain or IP address]:[Port]/[File path]
-```
-
-### Example:
-```
-http://192.168.50.177:80/index.html
-```
-
-- **Protocol**: `http` or `https`
-- **Domain/IP**: IP address or website name
-- **Port**: Optional (80 for HTTP, 443 for HTTPS)
-- **File path**: Path to the file on the server (relative to web root)
-
-> 🔸 Browsers automatically assume port 80 for HTTP and 443 for HTTPS if not specified.
-
----
-
-## 💡 Web Application Architecture
-
-Modern web applications often follow this structure:
-
-```
-Client (Browser)
-    ↓
-Web Server (Apache, Nginx)
-    ↓
-Web Application Server (WAS - PHP, JSP, ASP)
-    ↓
-Database (MySQL, MariaDB, etc.)
-```
-
-This layered design separates static file serving (web server) from dynamic processing (WAS).
-
----
-
-## ⚙️ PHP and HTTP Methods: GET vs POST
-
-In PHP, data from a user can be retrieved through either `$_GET` or `$_POST`, depending on the HTTP method used in the form submission.
-
----
-
-## 📮 GET Method
-
-### Description:
-- Sends form data through the **URL**
-- Parameters are appended as query strings
-- Visible to the user
-- Used for non-sensitive data and linkable resources
-
-### Example HTML Form:
-
-```html
-<form method="GET" action="login_proc.php">
-    <input type="text" name="id" placeholder="Enter your ID">
-    <input type="password" name="pass" placeholder="Enter your password">
-    <input type="submit" value="Login">
-</form>
-```
-
-### Example PHP Handler (`login_proc.php`):
+## 👉 Index.php - Basic Login Check
 
 ```php
 <?php
-    echo "ID: " . $_GET['id'] . "<br>";
-    echo "Password: " . $_GET['pass'];
+if ($_GET['login_id'] == "") {
+    header("Location: login.php");
+    exit;
+}
 ?>
 ```
 
-### URL will look like:
-```
-login_proc.php?id=student&pass=student1234
-```
+- **header()** function: Sends a raw HTTP header.
+  - Example: `header("Location: login.php");` redirects to login page.
+- **exit;** is important to stop further code execution after redirection.
 
 ---
 
-## 🕶️ POST Method
+## 🔒 Header Explanation
 
-### Description:
-- Sends form data through the **request body**
-- Not visible in the URL
-- More secure than GET (but still needs HTTPS for full security)
-- Commonly used for login forms and data modification
+- `header("Location: login.php");` → HTTP response will include `Location` header.
+- Redirects browser to `login.php`.
+- Always use `exit` after `header()` to prevent code leakage.
 
-### Example HTML Form:
+---
+
+## 👍 Form Handling
 
 ```html
-<form method="POST" action="login_proc.php">
-    <input type="text" name="id" placeholder="Enter your ID">
-    <input type="password" name="pass" placeholder="Enter your password">
-    <input type="submit" value="Login">
+<form action="">
+    <input type="text" name="username">
+    <input type="password" name="password">
+    <input type="submit" name="submit">
 </form>
 ```
 
-### Example PHP Handler:
+- `action=""` → Submits form to the same page.
+- Check if form is submitted:
 
 ```php
-<?php
-    echo "ID: " . $_POST['id'] . "<br>";
-    echo "Password: " . $_POST['pass'];
-?>
+if (isset($_POST['submit'])) {
+    // Handle form submission
+}
 ```
 
 ---
 
-## 🔍 Key Differences Between GET and POST
+## 🔍 Debugging Techniques
 
-| Feature           | GET                                  | POST                                 |
-|------------------|---------------------------------------|--------------------------------------|
-| Data Location     | URL (query string)                   | HTTP Request Body                    |
-| Visibility        | Visible in address bar               | Hidden from user view                |
-| Use Case          | Search queries, filters, navigation  | Logins, form submissions, updates    |
-| Max Data Length   | Limited (about 2048 characters)       | Much larger                          |
-| Security          | Less secure (use only for public data)| More secure (use with HTTPS)         |
+1. **Display PHP Errors:** Configure PHP to display errors for debugging.
+
+2. **Use echo for Debugging:**
+
+```php
+echo "Debug info: " . $login_res;
+```
+
+- Helps to trace variable values during development.
 
 ---
 
-## 🧪 Practice Exercise: Basic Login Page Using GET
+# 🔹 Database Concepts
 
-### login.html
+- **Database (DB):** Like an Excel file.
+- **Table:** Like a sheet inside Excel.
+- **Column:** Represents data categories (vertical).
+- **Row:** Represents each record (horizontal).
 
-```html
-<form method="GET" action="login_proc.php">
-    <input type="text" name="id" placeholder="User ID">
-    <input type="password" name="pass" placeholder="User Password">
-    <input type="submit" value="Login">
-</form>
+---
+
+## 💡 Web Interaction Flow
+
+```
+Web <-> WAS (Web Application Server) <-> DB (Database)
 ```
 
-### login_proc.php
+- **WAS** uses **SQL** to interact with **DB**.
+
+---
+
+## 📊 Basic SQL Commands
+
+### ✅ SELECT (Retrieve Data)
+
+```sql
+SELECT column_name FROM table_name;
+SELECT name FROM test_table;
+SELECT name, pass FROM test_table;
+SELECT * FROM test_table;
+```
+
+### ✅ INSERT (Insert Data)
+
+```sql
+INSERT INTO test_table (name, score, pass) 
+VALUES ('doldol', '80', '2222');
+
+-- or inserting with auto-increment id
+INSERT INTO test_table 
+VALUES (NULL, 'doldol', '70', '3333');
+```
+
+### ✅ SELECT with WHERE (Conditional Query)
+
+```sql
+SELECT * FROM test_table WHERE name = 'normaltic';
+SELECT * FROM test_table WHERE name = 'normaltic' OR pass = '1234';
+```
+
+---
+
+# 🖥️ PHP - MySQL Connection
+
+### Database Connection Example
 
 ```php
 <?php
-    echo "<h2>Login Information Received</h2>";
-    echo "ID: " . htmlspecialchars($_GET['id']) . "<br>";
-    echo "Password: " . htmlspecialchars($_GET['pass']);
+$db_conn = mysqli_connect('localhost', 'admin', 'student1234', 'test');
+
+if ($db_conn) {
+    echo "DB Connect OK";
+} else {
+    echo "DB Connect Fail";
+}
 ?>
 ```
 
 ---
 
-## 💬 Summary: What You Learned
+## 👀 Basic SELECT and Output
 
-1. How to use a web browser to send requests to a web server
-2. How URLs are structured and how ports work (80, 443)
-3. The difference between GET and POST methods in PHP
-4. How to send and receive parameters using forms
-5. How to make your own login page and parameter receiver in PHP
+```php
+$sql = "SELECT * FROM test_table";
+$result = mysqli_query($db_conn, $sql);
+$row = mysqli_fetch_array($result);
 
----
+var_dump($row);
 
-## 📝 Developer Notes
-
-- Use `htmlspecialchars()` to prevent XSS when printing user inputs.
-- Use POST for all login and sensitive data.
-- You can test these pages by placing them in `/var/www/html` if using Apache, or in a public folder if using XAMPP/MAMP.
-- Use the **SFTP extension in VSCode** to upload files to a remote web server.
-
----
-
-## 🧪 Example Login Credentials
-
-```
-ID: student
-Password: student1234
+echo "Name: " . $row['name'];
 ```
 
+### SELECT with WHERE Condition
+
+```php
+$sql = "SELECT * FROM test_table WHERE name='doldol'";
+$result = mysqli_query($db_conn, $sql);
+$row = mysqli_fetch_array($result);
+
+var_dump($row);
+
+echo "Password: " . $row['pass'];
+
+$db_pass = $row['pass'];
+if ($_POST['username'] == $db_pass) {
+    // Login successful
+}
+```
+
 ---
 
-Happy hacking! 🎯
+# 📌 Key Points
+
+- PHP variable starts with `$`.
+- PHP string concatenation uses `.` operator.
+- After a `header("Location:...")`, always use `exit;`.
+- In real-world, password comparison should use **hashed passwords** not plain text.
+
+---
+
+# 📈 Summary
+
+| Concept | Example |
+|:---|:---|
+| Database | Excel File |
+| Table | Excel Sheet |
+| Column | Vertical Category |
+| Row | Horizontal Record |
+| SQL Keywords | SELECT, INSERT, WHERE |
+| PHP-MySQL Connection | mysqli_connect |
+| Debugging | echo, var_dump |
+
+Stay sharp and code securely! 🚀
